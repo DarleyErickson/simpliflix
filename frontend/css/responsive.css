@@ -1,0 +1,120 @@
+/* =====================================================================
+   SimpliFlix — responsividade
+   Mobile first na prática: o layout base funciona em telas largas e é
+   reorganizado (não apenas reduzido) em tablets e smartphones.
+   ===================================================================== */
+
+/* ---------- tablets e notebooks pequenos ---------- */
+@media (max-width: 1199.98px) {
+  .results-layout { grid-template-columns: 270px minmax(0, 1fr); gap: 16px; }
+}
+
+@media (max-width: 991.98px) {
+  .topbar-inner { gap: 12px; }
+  .side-sticky { position: static; }
+  /* painel lateral dos resultados vira seção superior recolhível */
+  .results-layout { grid-template-columns: minmax(0, 1fr); }
+  .results-side { position: static; }
+  .side-toggle {
+    display: flex; width: 100%; align-items: center; justify-content: space-between;
+    background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 14px;
+    padding: 12px 16px; font-weight: 800; margin-bottom: 10px; cursor: pointer; min-height: 48px;
+  }
+  .side-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  #sidePanel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  #sidePanel .side-card { margin-bottom: 0; }
+  .decision { grid-template-columns: minmax(0, 1fr); }
+  .two-col { grid-template-columns: minmax(0, 1fr); }
+  #plot, .plot-box { height: 460px; }
+  .hero { padding-top: 36px; }
+}
+
+/* ---------- smartphones ---------- */
+@media (max-width: 767.98px) {
+  body { font-size: 15px; }
+  .container-xl { padding-left: 16px; padding-right: 16px; }
+  /* backdrop-filter criaria um bloco de contenção para a navegação fixa inferior */
+  .topbar { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--bg); }
+  .topbar-inner { height: 58px; }
+  .brand-text { font-size: 1.15rem; }
+  .api-status .lbl { display: none; }
+  /* menu compacto: barra de navegação fixa na parte inferior */
+  .mainnav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 1040;
+    background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border); padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    justify-content: space-around; gap: 4px;
+  }
+  .mainnav a { flex: 1; text-align: center; padding: 10px 6px; font-size: .86rem; border-radius: 12px; min-height: 44px; }
+  .mainnav a.active { box-shadow: inset 0 -3px 0 var(--accent); }
+  body { padding-bottom: 66px; }
+  .footer { margin-bottom: 10px; }
+
+  .hero { padding: 26px 0 22px; }
+  .hero-sub { font-size: 1rem; }
+  .hero-cta .btn { flex: 1 1 100%; }
+  .hero-visual { display: none; }
+  .poster-row { grid-auto-columns: 82%; }
+
+  .sf-card { padding: 16px; border-radius: 14px; }
+  .sf-card-head h2 { font-size: 1.05rem; }
+  .var-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .var-card { padding: 10px; }
+
+  /* restrições em cartões empilhados */
+  .cons-row { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: start; }
+  .cons-row .cons-id { grid-column: 1; grid-row: 1; }
+  .cons-row .cons-del { grid-column: 3; grid-row: 1; }
+  .cons-row .cons-terms { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+  .cons-row .cons-tail { grid-column: 1 / -1; grid-row: 3; display: grid; grid-template-columns: 90px 1fr; gap: 8px; }
+  .term { display: grid; grid-template-columns: 1fr auto; align-items: center; background: var(--surface); border-radius: 10px; padding: 2px 8px 2px 2px; }
+  .term input { width: 100%; }
+  .term .plus { display: none; }
+  .cons-op, .cons-rhs { width: 100%; }
+
+  .toolbar { display: grid; grid-template-columns: 1fr 1fr; }
+  .toolbar .btn { width: 100%; min-height: 44px; }
+  .toolbar #btnAddCons { grid-column: 1 / -1; }
+  .method-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .method-card { min-height: 96px; padding: 12px; }
+  .method-card .mc-desc { font-size: .74rem; }
+
+  /* barra fixa de resolução no celular */
+  .preview-card .solve-btn, .preview-card .hint { display: none; }
+  .mobile-solve-bar {
+    display: block; position: fixed; left: 0; right: 0; bottom: 64px; z-index: 1035;
+    padding: 8px 16px; background: linear-gradient(180deg, transparent, var(--bg) 40%);
+  }
+  .mobile-solve-bar .btn { min-height: 50px; font-size: 1.02rem; box-shadow: var(--shadow); }
+  #view-model { padding-bottom: 70px; }
+
+  #sidePanel { grid-template-columns: minmax(0, 1fr); }
+  .tabbar { position: sticky; top: 58px; z-index: 20; border-radius: 12px; }
+  .tabbar button { padding: 9px 12px; font-size: .86rem; min-height: 40px; }
+
+  .player { gap: 8px; }
+  .player .pprog { order: 10; flex-basis: 100%; }
+  .player .popts { order: 11; width: 100%; justify-content: space-between; }
+  .tableau { font-size: .82rem; }
+  .tableau th, .tableau td { padding: 7px 9px; }
+  #plot, .plot-box { height: 380px; }
+  .info-grid { grid-template-columns: 1fr 1fr; }
+  .hero-result { padding: 18px; }
+  .page-head { margin-bottom: 12px; }
+  .sf-table th, .sf-table td { padding: 8px 9px; }
+  .toast-stack { bottom: 76px; right: 12px; left: 12px; max-width: none; }
+
+  /* tabelas largas → cartões */
+  table.cards-sm thead { display: none; }
+  table.cards-sm, table.cards-sm tbody, table.cards-sm tr, table.cards-sm td { display: block; width: 100%; }
+  table.cards-sm tr { border-bottom: 1px solid var(--border); padding: 8px 4px; }
+  table.cards-sm td { border: 0; padding: 3px 10px; display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+  table.cards-sm td::before { content: attr(data-label); color: var(--muted); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; text-align: left; flex: none; max-width: 45%; }
+  table.cards-sm td.num { justify-content: space-between; }
+}
+
+@media (max-width: 380px) {
+  .var-grid { grid-template-columns: 1fr; }
+  .method-cards { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,10 @@
+# Execução da API
+fastapi>=0.110
+uvicorn[standard]>=0.29
+numpy>=1.26
+pydantic>=2.6
+
+# Testes (SciPy é usado EXCLUSIVAMENTE para validação cruzada nos testes)
+pytest>=8.0
+httpx>=0.27
+scipy>=1.11
