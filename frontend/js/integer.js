@@ -147,7 +147,7 @@
       payload.constraints.push({ name: `${payload.variables[j].name} ${op === '<=' ? '≤' : '≥'} ${val}`, coefficients: coefs, operator: op, rhs: val });
     });
     payload.options = { methods: ['two_phase'] };
-    const box = SF.ui.modal(`Nó N${n.id} — relaxação linear`, '<div class="text-muted">Resolvendo…</div>');
+    const box = SF.ui.modal(`Nó N${n.id}: relaxação linear`, '<div class="text-muted">Resolvendo…</div>');
     try {
       const d = await SF.api.simplex(payload);
       box.body.innerHTML = `<p class="text-muted">Restrições adicionais do ramo: <span class="mono">${n.constraints.length ? esc(n.constraints.join('; ')) : 'nenhuma'}</span></p><div class="node-player"></div>`;

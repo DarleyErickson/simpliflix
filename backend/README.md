@@ -14,6 +14,12 @@ python -m venv .venv
 .venv\Scripts\python -m uvicorn app.main:app --port 8000
 ```
 
+Para rodar os testes (instala também pytest, httpx e SciPy):
+
+```bash
+.venv\Scripts\python -m pip install -r requirements-dev.txt
+```
+
 ```bash
 .venv\Scripts\python -m pytest -q
 ```

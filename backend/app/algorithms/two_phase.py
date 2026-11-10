@@ -63,7 +63,7 @@ def solve_two_phase(model: LPModel, rule: str = "dantzig", max_iter: int = DEFAU
             steps[-1]["decision"] = {
                 "type": "infeasible",
                 "explanation": f"Fim da Fase 1 com W* = {fmt(w)} > 0: ao menos uma variável artificial permanece "
-                               f"positiva. Não existe solução que satisfaça todas as restrições — o problema é inviável.",
+                               f"positiva. Não existe solução que satisfaça todas as restrições: o problema é inviável.",
             }
             return assemble_result(model, sf, tab, "infeasible", steps, label, method_label,
                                    f"O problema é inviável: a Fase 1 terminou com W* = {fmt(w)} > 0.",

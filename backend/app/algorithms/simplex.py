@@ -477,7 +477,7 @@ def detect_alternatives(tab: Tableau, sf: StandardForm, model: LPModel, record: 
                 "direction": [num_json(v) for v in dx],
             })
             result["checks"].append({"variable": name, "result": "ray",
-                                     "text": f"{name}: Cj − Zj = 0 e nenhum coeficiente positivo na coluna — existe uma "
+                                     "text": f"{name}: Cj − Zj = 0 e nenhum coeficiente positivo na coluna, então existe uma "
                                              f"semirreta de soluções ótimas (x + t·d, t ≥ 0)."})
             continue
         if theta == 0:
@@ -506,7 +506,7 @@ def detect_alternatives(tab: Tableau, sf: StandardForm, model: LPModel, record: 
         result["alternatives"].append(entry)
         result["checks"].append({"variable": name, "result": "vertex",
                                  "text": f"{name}: Cj − Zj = 0 e pivoteamento admissível (θ = {fmt(theta)} > 0, sai "
-                                         f"{leaving}) — gera outra solução básica ótima distinta."})
+                                         f"{leaving}) gera outra solução básica ótima distinta."})
     if result["has_multiple"]:
         result["explanation"] = (
             "O problema possui soluções ótimas múltiplas: na tabela ótima há variável não básica com custo "

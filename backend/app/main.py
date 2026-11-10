@@ -26,7 +26,7 @@ VERSION = "1.0.0"
 
 app = FastAPI(
     title="SimpliFlix API",
-    description="Resolução e visualização de Programação Linear pelo Método Simplex (UNIMONTES — Pesquisa Operacional).",
+    description="Resolução e visualização de Programação Linear pelo Método Simplex (UNIMONTES, Pesquisa Operacional).",
     version=VERSION,
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])

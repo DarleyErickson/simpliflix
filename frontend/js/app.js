@@ -48,8 +48,8 @@
           <code>${ex.model.sense.toUpperCase()} Z = ${esc(SF.ui.linear(ex.model.c, names))}</code></button>`;
       }).join('');
       cards.dataset.done = '1';
-      $('#methodsInfo').innerHTML = SF.methodsInfo.map(m => `<div class="method-info"><span class="method-ico" aria-hidden="true">${m.ico}</span>
-        <h3>${esc(m.title)}</h3><p>${esc(m.desc)}</p></div>`).join('');
+      $('#methodsInfo').innerHTML = SF.methodsInfo.filter(m => m.key !== 'simplex').map(m => `<li><span class="mi" aria-hidden="true">${m.ico}</span>
+        <h3>${esc(m.title)}</h3><p>${esc(m.desc)}</p></li>`).join('');
     }
     // continuar de onde parou
     const saved = SF.ui.load('sf-model');

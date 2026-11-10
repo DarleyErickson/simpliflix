@@ -45,7 +45,7 @@ Recursos adicionais: frações nas entradas (`3/4`), alternância *fração/deci
 
 ## 3. Tecnologias
 
-- **Back-end:** Python 3.12+ · FastAPI · Uvicorn · NumPy (amostragens do gráfico) · `fractions` (núcleo exato)
+- **Back-end:** Python 3.12+ · FastAPI · Uvicorn · NumPy (amostragens do gráfico) · Matplotlib (figura para relatório) · `fractions` (núcleo exato)
 - **Front-end:** HTML5 · CSS3 · JavaScript (sem build) · Bootstrap 5.3 · Plotly.js 2.35 · Fetch API
 - **Testes:** pytest · httpx · SciPy (somente validação cruzada)
 
@@ -85,8 +85,9 @@ simpliflix/
 │   │   │   └── dual_model.py          # construção e resolução do dual
 │   │   ├── services/                  # validação, conversão do modelo, orquestração, gráfico
 │   │   └── utils/                     # numerical_utils (Fraction, MValue), matrix_utils
-│   ├── tests/                         # 429 testes (pytest)
-│   └── requirements.txt
+│   ├── tests/                         # 430 testes (pytest)
+│   ├── requirements.txt           # dependências do app
+│   └── requirements-dev.txt       # + pytest, httpx, SciPy (testes)
 ├── frontend/
 │   ├── index.html                     # SPA: Início, Modelagem, Resultados
 │   ├── css/style.css · responsive.css
@@ -183,6 +184,7 @@ Coeficientes podem ser números ou textos (`"3/4"`, `"2,5"`). `sign` aceita `non
 | POST | `/api/solve/integer` | Branch and Bound + arredondamento |
 | POST | `/api/solve/rounding` | Somente arredondamento |
 | POST | `/api/solve/dual` | Formulação e resolução tabular do dual |
+| POST | `/api/solve/graph/figure?fmt=png\|svg\|pdf` | Figura do método gráfico (Matplotlib, 300 dpi) para relatório e slides |
 | POST | `/api/solve/all` | Tudo o que foi selecionado (usado pela interface) |
 
 Respostas: `{"ok": true, "data": {...}}` (HTTP 200) ou `{"ok": false, "error": {"code", "message", "details": [{"field", "message"}]}}` (HTTP 422 para modelos inválidos, 500 para erros inesperados — sem expor detalhes internos).
@@ -191,10 +193,16 @@ Respostas: `{"ok": true, "data": {...}}` (HTTP 200) ou `{"ok": false, "error": {
 
 ```bash
 cd simpliflix/backend
+pip install -r requirements-dev.txt
+```
+
+```bash
 python -m pytest -q
 ```
 
-São **429 testes**: os 10 cenários exigidos (maximização, minimização, restrições mistas, artificiais, inviável, ilimitado, inteira ótima, arredondamento inviável, múltiplas soluções, dual), testes de degenerescência, Bland, limite de iterações, variáveis livres/≤0, método gráfico, algébrico, API e validação, além de **300 PPLs aleatórios** e **80 problemas inteiros aleatórios** comparados com o SciPy (HiGHS).
+(`requirements-dev.txt` acrescenta pytest, httpx e SciPy, usados apenas nos testes; o app em si só precisa de `requirements.txt`.)
+
+São **430 testes**: os 10 cenários exigidos (maximização, minimização, restrições mistas, artificiais, inviável, ilimitado, inteira ótima, arredondamento inviável, múltiplas soluções, dual), testes de degenerescência, Bland, limite de iterações, variáveis livres/≤0, método gráfico, algébrico, API e validação, além de **300 PPLs aleatórios** e **80 problemas inteiros aleatórios** comparados com o SciPy (HiGHS).
 
 ## 9. Limitações conhecidas
 

@@ -146,7 +146,7 @@
   // ------------------------------------------------------------ algébrico
   function algebraicHtml(a) {
     if (!a) return '';
-    let html = `<div class="sf-alert sf-alert-info"><h3>Método algébrico — soluções básicas</h3>
+    let html = `<div class="sf-alert sf-alert-info"><h3>Método algébrico: soluções básicas</h3>
       Na forma padrão há <b>${a.m}</b> equações e <b>${a.N}</b> variáveis. Fixando ${a.N - a.m} variáveis não básicas em zero, resolve-se o sistema
       para as ${a.m} básicas. São C(${a.N}, ${a.m}) = <b>${a.total_combinations}</b> combinações. ${esc(a.message)}</div>`;
     html += `<div class="panel mb-3"><h4>Sistema na forma padrão</h4><div class="std-form">${a.equations.map(e => `<div>${esc(e)}</div>`).join('')}
@@ -210,7 +210,7 @@
         <div class="sf-alert ${mult.has_multiple ? 'sf-alert-violet' : 'sf-alert-info'}">${esc(mult.explanation)}</div>`;
       if (mult.checks.length) html += `<ul class="checklist mb-3">${mult.checks.map(c => `<li><span class="ic ${c.result === 'vertex' || c.result === 'ray' ? 'ok' : 'bad'}">${c.result === 'vertex' || c.result === 'ray' ? '✓' : '–'}</span><div class="ct"><strong>${esc(c.text)}</strong></div></li>`).join('')}</ul>`;
       mult.alternatives.forEach(alt => {
-        html += `<div class="panel mb-3"><h4>Solução alternativa — ${alt.type === 'ray' ? 'semirreta de soluções' : `entra ${esc(alt.variable)}, sai ${esc(alt.leaving)} (θ = ${fmt(alt.theta)})`}</h4>
+        html += `<div class="panel mb-3"><h4>Solução alternativa: ${alt.type === 'ray' ? 'semirreta de soluções' : `entra ${esc(alt.variable)}, sai ${esc(alt.leaving)} (θ = ${fmt(alt.theta)})`}</h4>
           <div class="mono mb-2">${alt.solution.map(v => `${esc(v.name)} = ${fmt(v.exact)}`).join(', ')} &nbsp;→&nbsp; Z = ${fmt(alt.objective)} (mesmo valor ótimo)</div>
           ${alt.operations ? `<ol class="ops mb-2">${alt.operations.map(o => `<li>${esc(o.text)}</li>`).join('')}</ol>` : ''}
           ${alt.tableau ? SF.simplex.tableauHtml(alt.tableau, {}, { noLegend: true }) : ''}</div>`;

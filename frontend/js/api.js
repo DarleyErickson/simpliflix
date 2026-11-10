@@ -45,6 +45,23 @@
     return json.data;
   }
 
+  // figura do método gráfico (PNG, SVG ou PDF) gerada no back-end com Matplotlib
+  async function figure(body, fmt) {
+    let resp;
+    try {
+      resp = await fetch(`${BASE}/api/solve/graph/figure?fmt=${encodeURIComponent(fmt)}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    } catch (e) {
+      throw new ApiError('Não foi possível conectar à API do SimpliFlix para gerar a figura.', [], 'network');
+    }
+    if (!resp.ok) {
+      let err = {};
+      try { err = (await resp.json()).error || {}; } catch (e) { /* resposta sem JSON */ }
+      throw new ApiError(err.message || `Erro ${resp.status} ao gerar a figura.`, err.details || [], err.code, resp.status);
+    }
+    return resp.blob();
+  }
+
   async function health() {
     const el = document.getElementById('apiStatus');
     try {
@@ -60,7 +77,7 @@
   }
 
   SF.api = {
-    BASE, ApiError, health,
+    BASE, ApiError, health, figure,
     validate: p => request('/api/model/validate', p),
     solveAll: p => request('/api/solve/all', p),
     simplex: p => request('/api/solve/simplex', p),

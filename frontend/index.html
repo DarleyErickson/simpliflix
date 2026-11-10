@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="SimpliFlix — modelagem, resolução e visualização de Programação Linear pelo Método Simplex.">
-  <meta name="theme-color" content="#0b0d17">
+  <meta name="description" content="SimpliFlix: modele, resolva e visualize problemas de Programação Linear pelo Método Simplex.">
+  <meta name="theme-color" content="#111214">
   <title>SimpliFlix · Programação Linear</title>
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
   <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
-  <link rel="stylesheet" href="css/style.css?v=1.0.2">
-  <link rel="stylesheet" href="css/responsive.css?v=1.0.2">
+  <link rel="stylesheet" href="css/style.css?v=1.2.0">
+  <link rel="stylesheet" href="css/responsive.css?v=1.2.0">
 </head>
 <body>
   <a class="skip-link" href="#app">Pular para o conteúdo</a>
@@ -17,9 +17,9 @@
   <!-- ===================== CABEÇALHO ===================== -->
   <header class="topbar" role="banner">
     <div class="container-xl topbar-inner">
-      <a href="#/" class="brand" aria-label="SimpliFlix — início">
+      <a href="#/" class="brand" aria-label="SimpliFlix, página inicial">
         <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 40 40" width="34" height="34"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4f6d"/><stop offset="1" stop-color="#7c6cff"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#lg)"/><path d="M14 10.5 L30 20 L14 29.5 Z" fill="#fff" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="30" cy="20" r="2.6" fill="#ffb547"/></svg>
+          <svg viewBox="0 0 40 40" width="34" height="34"><rect width="40" height="40" rx="8" fill="#d63a40"/><path d="M14 10.5 L30 20 L14 29.5 Z" fill="#fff" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="30" cy="20" r="2.6" fill="#f2a93b"/></svg>
         </span>
         <span class="brand-text">Simpli<span>Flix</span></span>
       </a>
@@ -44,11 +44,10 @@
         <div class="container-xl">
           <div class="row align-items-center g-4">
             <div class="col-lg-6">
-              <span class="eyebrow">Pesquisa Operacional · Sistemas de Informação · UNIMONTES</span>
-              <h1 id="homeTitle" class="hero-title">Programação Linear,<br><span class="grad">episódio por episódio.</span></h1>
-              <p class="hero-sub">O SimpliFlix modela, resolve e explica problemas de Programação Linear pelo <strong>Método Simplex</strong>.
-                Cada iteração vira um episódio: veja quem entra, quem sai, o pivô e a nova tabela até a solução ótima —
-                além do gráfico da região viável, das curvas de nível, da solução inteira e do problema dual.</p>
+              <h1 id="homeTitle" class="hero-title">Resolva Programação Linear<br><span class="hl">uma iteração por vez.</span></h1>
+              <p class="hero-sub">Digite a função objetivo e as restrições. O SimpliFlix resolve pelo <strong>Método Simplex</strong> e mostra
+                cada tabela: a variável que entra, a que sai, o pivô e as operações de linha. Também desenha a região viável,
+                calcula a solução inteira por Branch and Bound e monta o problema dual.</p>
               <div class="hero-cta">
                 <a href="#/modelar" class="btn btn-sf-primary btn-lg" id="btnNewProblem">
                   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg>
@@ -59,30 +58,27 @@
                 <input type="file" id="fileOpenHome" accept=".json,application/json" class="visually-hidden">
               </div>
               <ul class="hero-points">
-                <li>Algoritmo Simplex próprio, em aritmética exata (frações)</li>
-                <li>Todas as tabelas e iterações, com pivô destacado</li>
-                <li>Funciona no computador e no celular</li>
+                <li>Contas em frações exatas, sem erro de arredondamento</li>
+                <li>Aceita MAX e MIN com restrições ≤, ≥ e =</li>
+                <li>Funciona offline, no computador e no celular</li>
               </ul>
             </div>
             <div class="col-lg-6">
               <div class="hero-visual" aria-hidden="true">
                 <div class="hv-screen">
-                  <div class="hv-top"><span></span><span></span><span></span><em>Episódio 2 · Pivoteamento</em></div>
+                  <div class="hv-top"><em>Iteração 2 de 3 · pivô em x₂</em></div>
                   <svg viewBox="0 0 360 230" class="hv-svg">
-                    <defs>
-                      <linearGradient id="reg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff" stop-opacity=".55"/><stop offset="1" stop-color="#ff4f6d" stop-opacity=".35"/></linearGradient>
-                    </defs>
-                    <g stroke="currentColor" opacity=".25"><line x1="40" y1="200" x2="340" y2="200"/><line x1="40" y1="200" x2="40" y2="15"/></g>
-                    <polygon points="40,200 200,200 200,140 120,50 40,50" fill="url(#reg)" stroke="#a89cff" stroke-width="1.5"/>
-                    <g stroke="#ffb547" stroke-dasharray="5 5" stroke-width="1.6" opacity=".75">
+                                        <g stroke="currentColor" opacity=".25"><line x1="40" y1="200" x2="340" y2="200"/><line x1="40" y1="200" x2="40" y2="15"/></g>
+                    <polygon points="40,200 200,200 200,140 120,50 40,50" fill="#d63a40" fill-opacity=".22" stroke="#d63a40" stroke-width="1.5"/>
+                    <g stroke="#f2a93b" stroke-dasharray="5 5" stroke-width="1.6" opacity=".75">
                       <line x1="40" y1="150" x2="150" y2="200"/><line x1="40" y1="100" x2="260" y2="200"/>
                     </g>
-                    <line x1="40" y1="25" x2="330" y2="157" stroke="#ff4f6d" stroke-width="2.4"/>
-                    <circle cx="120" cy="50" r="7" fill="#ffb547" stroke="#fff" stroke-width="2"/>
+                    <line x1="40" y1="25" x2="330" y2="157" stroke="#d63a40" stroke-width="2.4"/>
+                    <circle cx="120" cy="50" r="7" fill="#f2a93b" stroke="#fff" stroke-width="2"/>
                     <text x="130" y="44" fill="currentColor" font-size="12" font-weight="700">Z* = 36</text>
                     <g fill="currentColor" opacity=".9"><circle cx="40" cy="200" r="3.5"/><circle cx="200" cy="200" r="3.5"/><circle cx="200" cy="140" r="3.5"/><circle cx="40" cy="50" r="3.5"/></g>
                   </svg>
-                  <div class="hv-bar"><div class="hv-progress"><span style="width:66%"></span></div><small>T0 · Ep 1 · <b>Ep 2</b> · Final</small></div>
+                  <div class="hv-bar"><div class="hv-progress"><span style="width:66%"></span></div><small>Tabela inicial · 1 · <b>2</b> · ótima</small></div>
                 </div>
               </div>
             </div>
@@ -97,13 +93,26 @@
         </div>
 
         <div class="row-block">
-          <h2 class="row-title">Exemplos em destaque <small>clique para abrir no editor</small></h2>
+          <h2 class="row-title">Exemplos prontos</h2>
+          <p class="row-lead">Abra um exemplo no editor para ver cada caso: ótimo único, inviável, ilimitado, múltiplas soluções e inteiro.</p>
           <div class="poster-row" id="exampleCards" role="list"></div>
         </div>
 
         <div class="row-block">
-          <h2 class="row-title">Métodos disponíveis</h2>
-          <div class="methods-grid" id="methodsInfo"></div>
+          <h2 class="row-title">Métodos de resolução</h2>
+          <p class="row-lead">O Simplex tabular sempre roda. Os outros métodos servem para conferir o resultado por caminhos diferentes.</p>
+          <div class="methods-layout">
+            <div class="method-main">
+              <h3>Simplex tabular</h3>
+              <p>Monta a tabela inicial com Cj, CB, Zj e Cj − Zj e repete o pivoteamento até provar a otimalidade.</p>
+              <ul>
+                <li>Mostra a razão mínima e o motivo de cada escolha</li>
+                <li>Usa Duas Fases quando há restrições ≥ ou =</li>
+                <li>Detecta problema inviável, ilimitado e soluções múltiplas</li>
+              </ul>
+            </div>
+            <ul class="method-list" id="methodsInfo"></ul>
+          </div>
         </div>
 
         <div class="row-block how">
@@ -275,7 +284,7 @@
 
   <footer class="footer">
     <div class="container-xl footer-inner">
-      <div><span class="brand-text small">Simpli<span>Flix</span></span> · Projeto acadêmico de Pesquisa Operacional — Sistemas de Informação, UNIMONTES.</div>
+      <div><span class="brand-text small">Simpli<span>Flix</span></span> · Trabalho de Pesquisa Operacional, Sistemas de Informação, UNIMONTES.</div>
       <div class="team">Darley Erickson · Henrique Borges · Pedro Matheus · Enzo Melo</div>
     </div>
   </footer>
@@ -285,7 +294,7 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
       <div class="modal-content sf-modal">
         <div class="modal-header">
-          <h2 class="modal-title" id="sfModalTitle">—</h2>
+          <h2 class="modal-title" id="sfModalTitle">Detalhes</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body" id="sfModalBody"></div>
@@ -306,15 +315,15 @@
 
   <script src="assets/vendor/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/plotly.min.js" defer></script>
-  <script src="js/ui.js?v=1.0.2"></script>
-  <script src="js/api.js?v=1.0.2"></script>
-  <script src="js/examples.js?v=1.0.2"></script>
-  <script src="js/model.js?v=1.0.2"></script>
-  <script src="js/simplex.js?v=1.0.2"></script>
-  <script src="js/graphics.js?v=1.0.2"></script>
-  <script src="js/integer.js?v=1.0.2"></script>
-  <script src="js/dual.js?v=1.0.2"></script>
-  <script src="js/results.js?v=1.0.2"></script>
-  <script src="js/app.js?v=1.0.2"></script>
+  <script src="js/ui.js?v=1.2.0"></script>
+  <script src="js/api.js?v=1.2.0"></script>
+  <script src="js/examples.js?v=1.2.0"></script>
+  <script src="js/model.js?v=1.2.0"></script>
+  <script src="js/simplex.js?v=1.2.0"></script>
+  <script src="js/graphics.js?v=1.2.0"></script>
+  <script src="js/integer.js?v=1.2.0"></script>
+  <script src="js/dual.js?v=1.2.0"></script>
+  <script src="js/results.js?v=1.2.0"></script>
+  <script src="js/app.js?v=1.2.0"></script>
 </body>
 </html>

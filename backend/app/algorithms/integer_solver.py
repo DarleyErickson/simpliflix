@@ -75,7 +75,7 @@ def solve_rounding(model: LPModel, x_cont: Optional[List[Fraction]], mask: List[
     }
     if feasible:
         res["message"] = ("A solução arredondada satisfaz todas as restrições (é viável), mas o arredondamento NÃO "
-                          "garante otimalidade — compare com a solução inteira ótima.")
+                          "garante otimalidade. Compare com a solução inteira ótima.")
         return res
     res["message"] = ("A solução arredondada é INVIÁVEL: viola " + ", ".join(res["violated"]) +
                       ". O arredondamento convencional não produziu uma solução aceitável.")

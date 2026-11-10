@@ -64,7 +64,7 @@
       c.a.forEach((v, j) => chk(v, `constraints.${i}.coefficients.${j}`, `R${i + 1}, coeficiente de ${varName(j)}`));
       if (!OP[c.op]) add(`constraints.${i}.operator`, `R${i + 1}: escolha o operador (≤, ≥ ou =).`);
       chk(c.b, `constraints.${i}.rhs`, `R${i + 1}, lado direito`);
-      if (c.a.every(v => isNum(v) && numVal(v) === 0)) add(`constraints.${i}.coefficients.0`, `R${i + 1}: todos os coeficientes são zero — preencha ou remova a restrição.`);
+      if (c.a.every(v => isNum(v) && numVal(v) === 0)) add(`constraints.${i}.coefficients.0`, `R${i + 1}: todos os coeficientes são zero. Preencha ou remova a restrição.`);
     });
     return errs;
   }

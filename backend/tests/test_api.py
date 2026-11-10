@@ -74,3 +74,29 @@ def test_funcao_objetivo_zerada_e_sem_restricoes():
 def test_requisicao_malformada():
     r = client.post("/api/solve/all", json={"foo": 1})
     assert r.status_code == 422 and r.json()["error"]["code"] == "invalid_request"
+
+
+def test_figura_matplotlib():
+    assinatura = {"png": b"\x89PNG", "pdf": b"%PDF", "svg": b"<?xml"}
+    for fmt, magic in assinatura.items():
+        r = client.post(f"/api/solve/graph/figure?fmt={fmt}", json=WYNDOR)
+        assert r.status_code == 200, fmt
+        assert r.content.startswith(magic), fmt
+        assert len(r.content) > 5000, fmt
+    # casos especiais também precisam desenhar: inviável e ilimitado
+    inviavel = {"objective": {"type": "max", "coefficients": [1, 1]},
+                "constraints": [{"coefficients": [1, 1], "operator": "<=", "rhs": 2},
+                                {"coefficients": [1, 1], "operator": ">=", "rhs": 5}]}
+    ilimitado = {"objective": {"type": "max", "coefficients": [1, 1]},
+                 "constraints": [{"coefficients": [1, -1], "operator": "<=", "rhs": 2}]}
+    multiplo = {"objective": {"type": "max", "coefficients": [3, 2]},
+                "constraints": [{"coefficients": [3, 2], "operator": "<=", "rhs": 18},
+                                {"coefficients": [1, 0], "operator": "<=", "rhs": 4}]}
+    for body in (inviavel, ilimitado, multiplo):
+        assert client.post("/api/solve/graph/figure", json=body).status_code == 200
+    # formato inválido e modelo com 3 variáveis são recusados com mensagem
+    assert client.post("/api/solve/graph/figure?fmt=gif", json=WYNDOR).status_code == 422
+    tres = {"objective": {"type": "max", "coefficients": [1, 1, 1]},
+            "constraints": [{"coefficients": [1, 1, 1], "operator": "<=", "rhs": 5}]}
+    r = client.post("/api/solve/graph/figure", json=tres)
+    assert r.status_code == 422 and r.json()["ok"] is False

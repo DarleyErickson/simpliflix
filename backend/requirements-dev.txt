@@ -1,0 +1,5 @@
+# Dependências para os TESTES (SciPy é usado exclusivamente na validação cruzada)
+-r requirements.txt
+pytest>=8.0
+httpx>=0.27
+scipy>=1.11

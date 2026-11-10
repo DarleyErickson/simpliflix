@@ -181,3 +181,20 @@ A cada resolução são conferidos automaticamente:
 
 - **Front-end:** campos vazios, números inválidos, operador ausente, função objetivo nula, restrição sem coeficientes; campos destacados com mensagem.
 - **Back-end** (`validation_service.py`, `model_service.py`): repete todas as verificações, além de quantidade de coeficientes, limites incoerentes, valores não finitos ou grandes demais, nomes repetidos e limites de tamanho. As respostas trazem `field` + `message` em português; exceções internas viram uma mensagem genérica (HTTP 500), sem rastreamento.
+
+## 16. Figura estática do método gráfico (`figure_service.py`)
+
+O gráfico interativo é desenhado no navegador (Plotly). Para relatório e slides, a rota
+`POST /api/solve/graph/figure?fmt=png|svg|pdf` gera a mesma figura com Matplotlib, a partir dos
+dados exatos do método gráfico (nenhuma otimização é refeita por biblioteca externa):
+
+- interface orientada a objetos (`Figure`/`Axes`), sem o estado global do pyplot;
+- `constrained_layout`, para legenda e rótulos não se sobreporem;
+- PNG em 300 dpi com fundo branco; SVG e PDF vetoriais;
+- paleta Okabe-Ito (segura para daltônicos) e um traço diferente por restrição, de modo que a
+  leitura não dependa só da cor;
+- valores de Z escritos sobre as curvas de nível, coordenadas exatas nos vértices e o ótimo
+  anotado no próprio gráfico.
+
+As mesmas regras de legibilidade (paleta, traços, rótulos diretos, grade discreta) valem para o
+gráfico interativo.

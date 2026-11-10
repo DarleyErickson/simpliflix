@@ -153,8 +153,8 @@
     const one = (title, f) => f ? `<div class="panel"><h4>${title}</h4><div class="std-form"><div><b>${esc(f.objective)}</b></div>
       ${f.constraints.map(c => `<div>${esc(c)}</div>`).join('')}<div>${esc(f.nonnegativity)}</div>
       ${f.notes && f.notes.length ? `<div class="notes">${f.notes.map(esc).join('<br>')}</div>` : ''}</div></div>` : '';
-    if (sf.phase1) blocks.push(one('Fase 1 — minimizar a soma das artificiais', sf.phase1));
-    if (sf.phase2) blocks.push(one(sf.phase1 ? 'Fase 2 — função objetivo original' : 'Forma padrão', sf.phase2));
+    if (sf.phase1) blocks.push(one('Fase 1: minimizar a soma das artificiais', sf.phase1));
+    if (sf.phase2) blocks.push(one(sf.phase1 ? 'Fase 2: função objetivo original' : 'Forma padrão', sf.phase2));
     if (sf.bigm) blocks.push(one('Forma padrão com penalidade M', sf.bigm));
     if (sf.dual_simplex) blocks.push(one('Forma ≤ com folgas (Simplex Dual)', sf.dual_simplex));
     if (!blocks.length) return '';

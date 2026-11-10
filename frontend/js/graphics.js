@@ -8,7 +8,13 @@
   'use strict';
   const { esc, fmt, cssVar } = SF.ui;
 
-  const LINE_COLORS = ['#4cc3ff', '#ff8a3d', '#2fd28f', '#c86bff', '#ffd23f', '#ff6fa8', '#66e0d0', '#a3a8ff', '#ff9f9f', '#9be15d'];
+  // Paleta Okabe-Ito (segura para daltônicos), em versão para fundo escuro e para fundo claro.
+  // Cada restrição também recebe um traço diferente, para a leitura não depender só da cor.
+  const LINE_COLORS = {
+    dark: ['#56B4E9', '#E58FC0', '#3CC8A8', '#C9B8FF', '#A6D854', '#F0E442', '#D9D9D9'],
+    light: ['#0072B2', '#B0457F', '#007F5F', '#6A4FB5', '#4E7D1E', '#7A6A00', '#333333'],
+  };
+  const LINE_DASHES = ['solid', 'longdash', 'dashdot', 'longdashdot'];
 
   function lineBox(c1, c2, k, box) {
     const [xlo, xhi, ylo, yhi] = box;
@@ -59,6 +65,12 @@
           <output for="${id}-k" id="${id}-out"></output>
         </div>
         <p class="text-muted small mx-1 mb-1" id="${id}-hint"></p>
+        <div class="graph-export" role="group" aria-label="Baixar figura para relatório">
+          <span>Baixar figura para relatório ou slides:</span>
+          <button type="button" class="btn btn-sf-ghost btn-sm" data-fig="png">PNG (300 dpi)</button>
+          <button type="button" class="btn btn-sf-ghost btn-sm" data-fig="svg">SVG</button>
+          <button type="button" class="btn btn-sf-ghost btn-sm" data-fig="pdf">PDF</button>
+        </div>
       </div>
       ${verticesTable(g, xn, yn)}`;
 
@@ -67,30 +79,48 @@
     const traces = [];
     const push = (grp, t) => { groups[grp].push(traces.length); traces.push(t); };
     const text = cssVar('--text'), muted = cssVar('--muted'), accent = cssVar('--accent'), violet = cssVar('--accent-2');
-    const success = cssVar('--success'), warning = cssVar('--warning'), danger = cssVar('--danger');
+    const success = cssVar('--success'), warning = cssVar('--warning'), danger = cssVar('--danger'), info = cssVar('--info');
+    const surface = cssVar('--surface');
+    const palette = LINE_COLORS[document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'];
+    const mobile = window.innerWidth < 768;
+    // anotações escritas sobre o gráfico, cada uma ligada a uma camada (somem junto com ela)
+    const notes = [];
+    const label = (layer, x, y, txt, color, extra) => notes.push({ layer, a: Object.assign({
+      x, y, xref: 'x', yref: 'y', text: txt, showarrow: false, font: { color, size: 12 },
+      bgcolor: hexA(surface, 0.88), borderpad: 2 }, extra || {}) });
+    const along = (seg, t) => [seg[0][0] + t * (seg[1][0] - seg[0][0]), seg[0][1] + t * (seg[1][1] - seg[0][1])];
+    const awayFromEdge = p => p[0] >= box[0] + 0.08 * (box[1] - box[0]) && p[0] <= box[1] - 0.08 * (box[1] - box[0]) &&
+      p[1] >= box[2] + 0.06 * (box[3] - box[2]) && p[1] <= box[3] - 0.06 * (box[3] - box[2]);
 
     // região viável
     if (g.region && g.region.length) {
       const xs = g.region.map(p => p[0]), ys = g.region.map(p => p[1]);
       if (g.region.length >= 3) {
         push('region', { x: [...xs, xs[0]], y: [...ys, ys[0]], type: 'scatter', mode: 'lines', fill: 'toself',
-          fillcolor: hexA(violet, 0.22), line: { color: hexA(violet, 0.0), width: 0 }, name: 'Região viável' + (g.region_unbounded ? ' (recortada)' : ''),
+          fillcolor: hexA(text, 0.13), line: { color: hexA(text, 0.0), width: 0 }, name: 'Região viável' + (g.region_unbounded ? ' (recortada)' : ''),
           hoverinfo: 'skip' });
       } else {
-        push('region', { x: xs, y: ys, type: 'scatter', mode: 'lines+markers', line: { color: violet, width: 6 }, name: 'Região viável', hoverinfo: 'skip' });
+        push('region', { x: xs, y: ys, type: 'scatter', mode: 'lines+markers', line: { color: muted, width: 6 }, name: 'Região viável', hoverinfo: 'skip' });
       }
     }
     // retas das restrições
     let ci = 0;
     g.lines.forEach(l => {
       if (l.kind === 'sign' || !l.segment) return;
-      const color = LINE_COLORS[ci++ % LINE_COLORS.length];
+      const color = palette[ci % palette.length], dash = LINE_DASHES[ci % LINE_DASHES.length];
+      ci++;
+      const lp = [0.84, 0.16, 0.5].map(t => along(l.segment, t)).find(awayFromEdge);
+      if (lp) label('lines', lp[0], lp[1], `<b>${esc(l.name)}</b>`, color);
       push('lines', { x: [l.segment[0][0], l.segment[1][0]], y: [l.segment[0][1], l.segment[1][1]], type: 'scatter', mode: 'lines',
-        line: { color, width: 2.2 }, name: `${l.name}: ${l.label}`,
+        line: { color, width: 2.4, dash }, name: `${l.name}: ${l.label}`,
         hovertemplate: `<b>${esc(l.name)}</b><br>${esc(l.label)}<br>reta: ${esc(l.equation)}<br>(%{x:.3f}, %{y:.3f})<extra></extra>` });
     });
     // curvas de nível
     g.levels.forEach(lv => {
+      if (!mobile) {
+        const lp = [0.1, 0.5].map(t => along(lv.segment, t)).find(awayFromEdge);
+        if (lp) label('levels', lp[0], lp[1], `${lv.optimal ? 'Z* = ' : 'Z = '}${esc(lv.z_text)}`, lv.optimal ? accent : warning, { font: { color: lv.optimal ? accent : warning, size: 11 } });
+      }
       push('levels', { x: [lv.segment[0][0], lv.segment[1][0]], y: [lv.segment[0][1], lv.segment[1][1]], type: 'scatter', mode: 'lines',
         line: { color: lv.optimal ? accent : warning, width: lv.optimal ? 3.2 : 1.4, dash: lv.optimal ? 'solid' : 'dash' },
         name: lv.optimal ? `Curva ótima Z* = ${lv.z_text}` : `Z = ${lv.z_text}`, legendgroup: lv.optimal ? 'opt' : 'levels',
@@ -134,14 +164,15 @@
     const MK = {
       continuous: { symbol: 'star', size: 20, color: warning },
       rounded: { symbol: 'diamond', size: 14 },
-      adjusted: { symbol: 'triangle-up', size: 14, color: '#4cc3ff' },
+      adjusted: { symbol: 'triangle-up', size: 14, color: info },
       integer: { symbol: 'square', size: 13, color: success },
     };
     (g.markers || []).forEach(mk => {
       const st = MK[mk.type] || { symbol: 'circle', size: 12, color: accent };
-      const color = mk.type === 'rounded' ? (mk.feasible ? '#ff8a3d' : danger) : st.color;
+      const color = mk.type === 'rounded' ? (mk.feasible ? palette[1] : danger) : st.color;
+      const symbol = mk.type === 'rounded' && !mk.feasible ? 'x' : st.symbol;
       push('sol', { x: [mk.x], y: [mk.y], type: 'scatter', mode: 'markers', name: mk.label,
-        marker: { symbol: st.symbol, size: st.size, color, line: { color: '#fff', width: 1.5 } },
+        marker: { symbol, size: st.size, color, line: { color: '#fff', width: 1.5 } },
         hovertemplate: `<b>${esc(mk.label)}</b><br>${esc(mk.text)}<br>Z = ${esc(mk.z)}<extra></extra>` });
     });
     if (!(g.markers || []).some(m => m.type === 'continuous') && g.optimal) {
@@ -155,24 +186,45 @@
     traces.push({ x: [], y: [], type: 'scatter', mode: 'lines', line: { color: violet, width: 2.5, dash: 'dot' }, name: 'Curva de nível (controle)', hoverinfo: 'skip' });
 
     const grad = g.gradient;
+    if (g.feasible) {
+      // seta do sentido de melhoria de Z, com o nome escrito na ponta
+      notes.push({ layer: null, a: {
+        x: grad.to[0], y: grad.to[1], ax: grad.from[0], ay: grad.from[1], xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+        showarrow: true, arrowhead: 3, arrowsize: 1.3, arrowwidth: 2.4, arrowcolor: accent, text: '', hovertext: grad.text } });
+      label(null, grad.to[0], grad.to[1], g.objective.sense === 'max' ? 'Z aumenta' : 'Z diminui', accent,
+        { xanchor: grad.to[0] >= grad.from[0] ? 'left' : 'right', yanchor: grad.to[1] >= grad.from[1] ? 'bottom' : 'top', bgcolor: 'rgba(0,0,0,0)' });
+    }
+    if (g.optimal) {
+      // o ótimo é nomeado no próprio gráfico, do lado oposto à seta para não cobri-la
+      const p = g.optimal.points[0];
+      const more = g.optimal_set && g.optimal_set.type !== 'point' ? '<br>(uma das soluções ótimas)' : '';
+      notes.push({ layer: 'sol', a: {
+        x: p.x, y: p.y, xref: 'x', yref: 'y', text: `<b>Ótimo (${esc(p.x_text)}, ${esc(p.y_text)})</b><br>Z* = ${esc(g.optimal.z_text)}${more}`,
+        showarrow: true, arrowhead: 0, arrowwidth: 1, arrowcolor: text, standoff: 12,
+        ax: grad.to[0] >= grad.from[0] ? -78 : 78, ay: grad.to[1] >= grad.from[1] ? 52 : -52,
+        font: { color: text, size: 12 }, align: 'center', bgcolor: surface, bordercolor: cssVar('--border-strong'), borderwidth: 1, borderpad: 5 } });
+    }
+    const layerOn = {};
+    container.querySelectorAll('[data-layer]').forEach(cb => { layerOn[cb.dataset.layer] = cb.checked; });
+    const visibleNotes = () => notes.filter(n => !n.layer || layerOn[n.layer]).map(n => n.a);
+    const axis = (title, lo, hi) => ({
+      title: { text: title, font: { size: 14 } }, range: [lo, hi], tickfont: { size: 12 },
+      gridcolor: hexA(muted, 0.3), zerolinecolor: hexA(text, 0.7), zerolinewidth: 1.5, automargin: true });
     const layout = {
       paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-      font: { family: cssVar('--font'), color: text, size: 12 },
-      margin: { l: 52, r: 16, t: 16, b: 48 },
-      xaxis: { title: { text: xn }, range: [box[0], box[1]], gridcolor: hexA(muted, 0.18), zerolinecolor: hexA(text, 0.55), zerolinewidth: 1.5 },
-      yaxis: { title: { text: yn }, range: [box[2], box[3]], gridcolor: hexA(muted, 0.18), zerolinecolor: hexA(text, 0.55), zerolinewidth: 1.5 },
-      legend: { orientation: 'h', y: -0.18, x: 0, bgcolor: 'rgba(0,0,0,0)', font: { size: 11 } },
+      font: { family: cssVar('--font'), color: text, size: 13 },
+      margin: { l: 56, r: 16, t: 16, b: 52 },
+      xaxis: axis(xn, box[0], box[1]),
+      yaxis: axis(yn, box[2], box[3]),
+      legend: { orientation: 'h', y: -0.2, x: 0, bgcolor: 'rgba(0,0,0,0)', font: { size: 12 } },
       hovermode: 'closest', dragmode: 'pan',
-      hoverlabel: { bgcolor: cssVar('--surface-2'), bordercolor: cssVar('--border-strong'), font: { color: text } },
-      annotations: g.feasible ? [{
-        x: grad.to[0], y: grad.to[1], ax: grad.from[0], ay: grad.from[1], xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
-        showarrow: true, arrowhead: 3, arrowsize: 1.3, arrowwidth: 2.4, arrowcolor: accent, text: '', hovertext: grad.text,
-      }] : [],
+      hoverlabel: { bgcolor: cssVar('--surface-2'), bordercolor: cssVar('--border-strong'), font: { color: text, size: 13 } },
+      annotations: visibleNotes(),
     };
-    if (window.innerWidth < 768) { layout.legend.y = -0.32; layout.margin = { l: 44, r: 8, t: 8, b: 40 }; }
+    if (mobile) { layout.legend.y = -0.32; layout.margin = { l: 44, r: 8, t: 8, b: 40 }; }
     const config = { responsive: true, displaylogo: false, scrollZoom: true, locale: 'pt-BR',
       modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
-      toImageButtonOptions: { filename: 'simpliflix-grafico', scale: 2 } };
+      toImageButtonOptions: { filename: 'simpliflix-grafico', scale: 3 } };
 
     if (!window.Plotly) {
       el.innerHTML = '<div class="empty-state">Biblioteca Plotly não carregada.</div>';
@@ -185,6 +237,8 @@
       const apply = () => {
         const ids = groups[cb.dataset.layer];
         if (ids.length) Plotly.restyle(el, { visible: cb.checked ? true : false }, ids);
+        layerOn[cb.dataset.layer] = cb.checked;
+        Plotly.relayout(el, { annotations: visibleNotes() });
       };
       cb.addEventListener('change', apply);
       if (!cb.checked) apply();
@@ -209,6 +263,25 @@
     };
     slider.addEventListener('input', update);
     update();
+
+    // figura estática (Matplotlib, gerada pela API) para relatório e slides
+    container.querySelectorAll('[data-fig]').forEach(btn => btn.addEventListener('click', async () => {
+      const r = SF.state.results;
+      if (!r || !r.model_json) { SF.ui.toast('Resolva o problema de novo para gerar a figura.', 'warning'); return; }
+      const fmtName = btn.dataset.fig;
+      btn.disabled = true;
+      try {
+        const blob = await SF.api.figure(r.model_json, fmtName);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${SF.ui.slug(r.model.name)}-grafico.${fmtName}`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        SF.ui.toast(`Figura ${fmtName.toUpperCase()} gerada.`, 'success');
+      } catch (e) {
+        SF.ui.toast(esc(e.message), 'error');
+      } finally { btn.disabled = false; }
+    }));
 
     const onTheme = () => {
       if (!document.body.contains(el)) { document.removeEventListener('sf:theme', onTheme); return; }
