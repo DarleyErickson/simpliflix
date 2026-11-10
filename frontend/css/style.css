@@ -20,6 +20,8 @@
   --accent-ink: #ffffff;
   --accent-2: #f2a93b;        /* âmbar */
   --accent-soft: rgba(214, 58, 64, .16);
+  --hero-glow-1: rgba(214, 58, 64, .24);
+  --hero-glow-2: rgba(242, 169, 59, .15);
   --violet-soft: rgba(242, 169, 59, .14);
   --success: #3fcf8e;
   --success-soft: rgba(63, 207, 142, .13);
@@ -59,6 +61,8 @@
   --accent-fill: #c42b31;
   --accent-2: #8f5300;
   --accent-soft: rgba(196, 43, 49, .08);
+  --hero-glow-1: rgba(196, 43, 49, .13);
+  --hero-glow-2: rgba(242, 169, 59, .20);
   --violet-soft: rgba(242, 169, 59, .16);
   --success: #0d7f50;
   --success-soft: rgba(13, 127, 80, .09);
@@ -149,7 +153,15 @@ kbd { background: var(--surface-3); color: var(--text); border: 1px solid var(--
 .btn-sf-danger:hover { background: var(--danger); color: #fff; }
 
 /* ---------------------------------------------------------------- home */
-.hero { padding: 64px 0 56px; background: var(--bg-2); border-bottom: 1px solid var(--border); }
+.hero {
+  position: relative; overflow: hidden; padding: 64px 0 56px;
+  /* degradê de fundo na paleta do site: vermelho à esquerda, âmbar à direita */
+  background:
+    radial-gradient(900px 420px at 88% 18%, var(--hero-glow-2), transparent 62%),
+    radial-gradient(760px 400px at 8% 0%, var(--hero-glow-1), transparent 62%),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+  border-bottom: 1px solid var(--border);
+}
 .eyebrow { display: block; font-size: .9rem; font-weight: 600; color: var(--muted); }
 .hero-title { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; line-height: 1.05; margin: 10px 0 18px; }
 .hero-title .hl { color: var(--accent); }
